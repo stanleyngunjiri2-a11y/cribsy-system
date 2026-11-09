@@ -1,0 +1,3 @@
+// OWNER: Member 6 - Lynn. Maintenance request list and status management scaffold.
+import PageHeading from '../../components/shared/PageHeading';import StateMessage from '../../components/shared/StateMessage';
+export default function MaintenanceRequestsPage(){return <section className="container section"><PageHeading eyebrow="Maintenance" title="Maintenance requests" description="Review reported issues and track their progress."/><StateMessage title="No requests to display" message="Request records and landlord status updates will appear here after backend integration."/></section>}

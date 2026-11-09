@@ -1,0 +1,3 @@
+// OWNER: Member 1 - Stanley. Shared footer component.
+import { Link } from 'react-router-dom';
+export default function Footer(){return <footer className="footer"><div className="container footer-inner"><div><Link to="/" className="brand">RentConnect</Link><p>Making rental management clearer for everyone.</p></div><div className="footer-links"><Link to="/properties">Find a home</Link><Link to="/register">Create account</Link><Link to="/login">Sign in</Link></div><small>© {new Date().getFullYear()} RentConnect. Frontend project preview.</small></div></footer>}

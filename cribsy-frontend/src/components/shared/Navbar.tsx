@@ -1,0 +1,5 @@
+// OWNER: Member 1 - Stanley. Shared responsive navigation; Alex may request changes via Stanley.
+import { Link, NavLink } from 'react-router-dom';
+import { Home, Menu, X } from 'lucide-react';
+import { useState } from 'react';
+export default function Navbar() { const [open,setOpen]=useState(false); const links=[['Find a home','/properties'],['For landlords','/landlord'],['Sign in','/login']]; return <header className="site-header"><nav className="container nav-wrap" aria-label="Main navigation"><Link to="/" className="brand"><span className="brand-mark"><Home size={19}/></span>RentConnect</Link><button className="mobile-toggle" aria-label={open?'Close menu':'Open menu'} onClick={()=>setOpen(!open)}>{open?<X/>:<Menu/>}</button><div className={`nav-links ${open?'is-open':''}`}>{links.map(([label,path])=><NavLink key={path} to={path} onClick={()=>setOpen(false)}>{label}</NavLink>)}<Link className="button button-small" to="/register" onClick={()=>setOpen(false)}>Create account</Link></div></nav></header>; }

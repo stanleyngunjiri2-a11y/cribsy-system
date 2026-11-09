@@ -1,0 +1,3 @@
+// OWNER: Member 1 - Stanley. Shared authentication page layout.
+import type { ReactNode } from 'react';
+export default function AuthLayout({title,description,children}:{title:string;description:string;children:ReactNode}){return <section className="auth-section"><div className="auth-card"><p className="eyebrow">RentConnect account</p><h1>{title}</h1><p className="muted">{description}</p>{children}<p className="sample-note">Authentication is a frontend preview. No account is created or verified yet.</p></div></section>}

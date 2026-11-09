@@ -1,0 +1,3 @@
+// OWNER: Member 4 - Nato. Landlord tenant directory.
+import PageHeading from '../../components/shared/PageHeading';import StateMessage from '../../components/shared/StateMessage';
+export default function LandlordTenantsPage(){return <section className="container section"><PageHeading eyebrow="Landlord workspace" title="Tenants" description="View tenant details and tenancy information for your properties."/><StateMessage title="No tenant records" message="Tenant records will be displayed here when the backend is connected."/></section>}
