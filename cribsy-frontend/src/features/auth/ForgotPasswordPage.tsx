@@ -1,3 +1,0 @@
-// OWNER: Member 1 - Stanley. Password recovery request interface.
-import { Link } from 'react-router-dom';import AuthLayout from './AuthLayout';import FormField from '../../components/shared/FormField';
-export default function ForgotPasswordPage(){return <AuthLayout title="Reset your password" description="Enter your email address to request a password reset."><form className="stack-form" onSubmit={e=>{e.preventDefault();alert('Demo only: password reset email is not sent.')}}><FormField id="email" label="Email address" type="email" required placeholder="you@example.com"/><button className="button button-primary full-width">Request reset link</button></form><p className="auth-bottom"><Link to="/login">Back to sign in</Link></p></AuthLayout>}

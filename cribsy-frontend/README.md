@@ -1,26 +1,21 @@
-# RentConnect frontend
+# RentConnect Frontend
 
-Week 1 frontend scaffold for the RentConnect rental property and tenant management project.
+This directory contains the frontend application for RentConnect.
 
-## Requirements
-- Node.js 20.19+ or 22.12+
-- npm
+The frontend will be rebuilt from scratch.
 
-## Run locally
-```bash
-npm install
-npm run dev
-```
+## Project Information
 
-## Quality checks
-```bash
-npm run typecheck
-npm run lint
-npm run build
-```
+- Project: RentConnect
+- Frontend framework: React
+- Programming language: JavaScript
+- Build tool: To be configured
+- Styling: To be configured
 
-## Important project boundary
-This repository currently contains frontend UI and clearly labelled demonstration data. Authentication, role authorization, database persistence, property image storage, enquiries, payments, maintenance workflows and admin actions are **not connected**. The frontend `ProtectedRoute` is a placeholder and is not a security boundary. Week 2 backend work must enforce authorization on the server for every protected action.
+## Development
 
-## Team ownership
-See [TEAM_RESPONSIBILITIES.md](TEAM_RESPONSIBILITIES.md) and the OWNER comments at the top of source files.
+The frontend setup, dependencies, folder structure, components and application features will be added progressively.
+
+## Team
+
+See the project documentation for team responsibilities and development workflow.

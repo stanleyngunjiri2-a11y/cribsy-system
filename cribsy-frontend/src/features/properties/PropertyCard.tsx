@@ -1,5 +1,0 @@
-// OWNER: Member 3 - Quincy. Reusable property listing card.
-import { Link } from 'react-router-dom';
-import { BedDouble, Bath, MapPin } from 'lucide-react';
-import type { Property } from './data';
-export default function PropertyCard({property}:{property:Property}){return <article className="property-card"><Link to={`/properties/${property.id}`} className="property-image-link" aria-label={`View ${property.name}`}><img src={property.image} alt={`Demonstration image for ${property.name}`}/><span className={`status ${property.available?'available':'unavailable'}`}>{property.available?'Available':'Not available'}</span></Link><div className="property-content"><p className="muted location"><MapPin size={15}/>{property.location}</p><h3><Link to={`/properties/${property.id}`}>{property.name}</Link></h3><p className="price">KSh {property.rent.toLocaleString()} <span>/ month</span></p><div className="property-meta"><span><BedDouble size={16}/>{property.bedrooms} beds</span><span><Bath size={16}/>{property.bathrooms} baths</span></div><Link className="text-link" to={`/properties/${property.id}`}>View details <span aria-hidden="true">→</span></Link></div></article>}

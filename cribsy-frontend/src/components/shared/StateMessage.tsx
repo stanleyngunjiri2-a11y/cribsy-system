@@ -1,2 +1,0 @@
-// OWNER: Member 1 - Stanley. Shared empty/loading/error message component.
-export default function StateMessage({title,message}:{title:string;message:string}){return <div className="state-box"><h3>{title}</h3><p>{message}</p></div>}

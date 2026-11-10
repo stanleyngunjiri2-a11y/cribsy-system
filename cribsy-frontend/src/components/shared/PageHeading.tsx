@@ -1,2 +1,0 @@
-// OWNER: Member 1 - Stanley. Reusable page heading.
-export default function PageHeading({eyebrow,title,description}:{eyebrow?:string;title:string;description?:string}){return <div className="page-heading">{eyebrow&&<p className="eyebrow">{eyebrow}</p>}<h1>{title}</h1>{description&&<p className="muted max-w-2xl">{description}</p>}</div>}

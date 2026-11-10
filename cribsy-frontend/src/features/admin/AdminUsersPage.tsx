@@ -1,3 +1,0 @@
-// OWNER: Member 6 - Lynn. Admin user management interface scaffold.
-import PageHeading from '../../components/shared/PageHeading';
-export default function AdminUsersPage(){return <section className="container section"><PageHeading eyebrow="Administration" title="User management" description="Review user accounts and account status."/><div className="content-card"><div className="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Account status</th><th>Action</th></tr></thead><tbody><tr><td colSpan={5}>No connected user records.</td></tr></tbody></table></div><p className="sample-note">Admin actions are not functional until secure backend permissions and endpoints are implemented.</p></div></section>}
