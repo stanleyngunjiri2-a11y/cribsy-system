@@ -7,7 +7,7 @@ function AdminDashboardPage(){
         {label: 'Total users', value: adminUsers.length},
         {label:'Landlords', value: adminUsers.filter((u) => u.role === 'Landlord').length},
         {label: 'Tenant', value: adminUsers.filter((u) => u.role ==='Tenant').length},
-        {label: 'Properties awaiting approval', value: adminPropereties.filter((p) => p.approval === 'Pending').length},
+        {label: 'Properties awaiting approval', value: adminProperties.filter((p) => p.approval === 'Pending').length},
     ]
     return(
         <>
@@ -24,3 +24,4 @@ function AdminDashboardPage(){
         </>
     )
 }
+export default AdminDashboardPage
