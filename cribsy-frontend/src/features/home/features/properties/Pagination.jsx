@@ -17,3 +17,12 @@ function Pagination({ page, totalPages, onPageChange }) {
         >
           {n}
         </button>
+           ))}
+      <button className={`${base} border-slate-300 bg-white`} disabled={page === totalPages} onClick={() => onPageChange(page + 1)}>
+        Next
+      </button>
+    </nav>
+  )
+}
+
+export default Pagination
