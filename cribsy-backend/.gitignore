@@ -1,0 +1,39 @@
+# Environment variables and secrets
+.env
+.env.*
+
+# Allow the example environment file
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Flask
+instance/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Old Node.js dependencies
+node_modules/
+.npm/
