@@ -39,3 +39,31 @@ function PropertiesPage() {
     setFilters(emptyFilters)
     setPage(1)
   }
+  const results = applyFilters(propertiesData, filters)
+  const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE))
+  const visible = results.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-8">
+      <PageHeading title="Find a home" description="Search the available rental properties." />
+      <SampleDataNotice />
+      <PropertyFilters filters={filters} onChange={handleChange} onReset={handleReset} />
+
+      <p className="my-4 text-sm text-slate-600" aria-live="polite">
+        {results.length} {results.length === 1 ? 'property' : 'properties'} found
+      </p>
+
+      {visible.length === 0 ? (
+        <StateMessage title="No properties match" message="Try changing or clearing your filters." />
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {visible.map((p) => <PropertyCard key={p.id} property={p} />)}
+        </div>
+      )}
+
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+    </section>
+  )
+}
+
+export default PropertiesPage
