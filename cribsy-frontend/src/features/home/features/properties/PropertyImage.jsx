@@ -1,4 +1,3 @@
-// OWNER: Member 3 - Quincy. Placeholder until real photos are connected.
 import { Home } from 'lucide-react'
 
 function PropertyImage({ name, className = 'h-40' }) {
