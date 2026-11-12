@@ -22,4 +22,4 @@ export const propertiesData = [
     description: 'A three-bedroom townhouse in a gated community.', amenities: ['Parking', 'Security', 'Garden'] },
   { id: '10', name: 'Skyline Studio', location: 'Kilimani, Nairobi', rent: 38000, bedrooms: 1, bathrooms: 1, type: 'Studio', available: true,
     description: 'A modern studio with a lift and backup power.', amenities: ['Lift', 'Security', 'Backup power'] },
-  ]
+]
