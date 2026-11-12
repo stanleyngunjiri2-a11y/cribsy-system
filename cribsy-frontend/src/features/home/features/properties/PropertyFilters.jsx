@@ -1,4 +1,3 @@
-// OWNER: Member 3 - Quincy. Search and filter controls.
 import FormField from '../../components/shared/FormField'
 import SelectField from '../../components/shared/SelectField'
 import Button from '../../components/shared/Button'
