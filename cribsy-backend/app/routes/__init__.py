@@ -1,14 +1,11 @@
-def register_blueprints(app):
-    from .admin import admin_bp
-    from .auth import auth_bp
-    from .landlord import landlord_bp
-    from .maintenance import maintenance_bp
-    from .public import public_bp
-    from .tenant import tenant_bp
+"""Every file in this folder that defines `bp` and `URL_PREFIX` is registered automatically,
+so team members never edit this file."""
+import importlib
+import pkgutil
 
-    app.register_blueprint(auth_bp, url_prefix="/api/auth")
-    app.register_blueprint(public_bp, url_prefix="/api")
-    app.register_blueprint(landlord_bp, url_prefix="/api/landlord")
-    app.register_blueprint(tenant_bp, url_prefix="/api/tenant")
-    app.register_blueprint(maintenance_bp, url_prefix="/api")
-    app.register_blueprint(admin_bp, url_prefix="/api/admin")
+
+def register_blueprints(app):
+    for info in pkgutil.iter_modules(__path__):
+        module = importlib.import_module(f"{__name__}.{info.name}")
+        if hasattr(module, "bp"):
+            app.register_blueprint(module.bp, url_prefix=module.URL_PREFIX)
