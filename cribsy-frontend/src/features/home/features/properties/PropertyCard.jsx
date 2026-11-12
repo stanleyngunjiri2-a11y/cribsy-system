@@ -1,4 +1,3 @@
-// OWNER: Member 3 - Quincy. Reusable property card.
 import { Link } from 'react-router-dom'
 import { Bath, BedDouble } from 'lucide-react'
 import PropertyImage from './PropertyImage'
