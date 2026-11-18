@@ -32,6 +32,7 @@ import AdminUsersPage from './features/admin/AdminUsersPage'
 import AdminPropertiesPage from './features/admin/AdminPropertiesPage'
 
 import NewMaintenanceRequestPage from './features/maintenance/NewMaintenanceRequestPage'
+import ProtectedRoute from './routes/ProtectedRoute'
 
 function NotFoundPage() {
   return (
@@ -58,28 +59,34 @@ function App() {
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/verify" element={<TwoStepVerificationPage />} />
 
-      <Route path="/landlord" element={<LandlordLayout />}>
-        <Route index element={<LandlordDashboardPage />} />
-        <Route path="properties" element={<MyPropertiesPage />} />
-        <Route path="properties/new" element={<AddPropertyPage />} />
-        <Route path="properties/:id/edit" element={<EditPropertyPage />} />
-        <Route path="tenants" element={<LandlordTenantsPage />} />
-        <Route path="maintenance" element={<LandlordMaintenancePage />} />
+      <Route element={<ProtectedRoute allowedRoles={['landlord']} />}>
+        <Route path="/landlord" element={<LandlordLayout />}>
+          <Route index element={<LandlordDashboardPage />} />
+          <Route path="properties" element={<MyPropertiesPage />} />
+          <Route path="properties/new" element={<AddPropertyPage />} />
+          <Route path="properties/:id/edit" element={<EditPropertyPage />} />
+          <Route path="tenants" element={<LandlordTenantsPage />} />
+          <Route path="maintenance" element={<LandlordMaintenancePage />} />
+        </Route>
       </Route>
 
-      <Route path="/tenant" element={<TenantLayout />}>
-        <Route index element={<TenantDashboardPage />} />
-        <Route path="rent-history" element={<RentHistoryPage />} />
-        <Route path="rent-history/:id" element={<PaymentDetailsPage />} />
-        <Route path="maintenance" element={<TenantMaintenancePage />} />
-        <Route path="maintenance/new" element={<NewMaintenanceRequestPage />} />
-        <Route path="profile" element={<TenantProfilePage />} />
+      <Route element={<ProtectedRoute allowedRoles={['tenant']} />}>
+        <Route path="/tenant" element={<TenantLayout />}>
+          <Route index element={<TenantDashboardPage />} />
+          <Route path="rent-history" element={<RentHistoryPage />} />
+          <Route path="rent-history/:id" element={<PaymentDetailsPage />} />
+          <Route path="maintenance" element={<TenantMaintenancePage />} />
+          <Route path="maintenance/new" element={<NewMaintenanceRequestPage />} />
+          <Route path="profile" element={<TenantProfilePage />} />
+        </Route>
       </Route>
 
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<AdminDashboardPage />} />
-        <Route path="users" element={<AdminUsersPage />} />
-        <Route path="properties" element={<AdminPropertiesPage />} />
+      <Route element={<ProtectedRoute allowedRoles={['admin', 'superadmin']} />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboardPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
+          <Route path="properties" element={<AdminPropertiesPage />} />
+        </Route>
       </Route>
 
       <Route path="/dashboard" element={<Navigate to="/tenant" replace />} />

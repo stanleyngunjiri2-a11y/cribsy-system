@@ -1,114 +1,109 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, Save } from 'lucide-react'
 import PageHeading from '../../components/shared/PageHeading'
-import SampleDataNotice from '../../components/shared/SampleDataNotice'
-import { landlordProperties, landlordKES } from './landlordData'
+import { landlordAPI } from '../../services/api'
 
-function EditPropertyPage() {
+export default function EditPropertyPage() {
   const { id } = useParams()
-  const property = landlordProperties.find((item) => String(item.id) === id)
-  const [saved, setSaved] = useState(false)
+  const [form, setForm] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
-  const [form, setForm] = useState(() => property ? {
-    name: property.name,
-    location: property.location,
-    units: property.units,
-    occupied: property.occupied,
-    rent: property.rent,
-    status: property.status,
-  } : null)
+  useEffect(() => {
+    landlordAPI.property(id)
+      .then(property => setForm({
+        name: property.name || '',
+        location: property.location || '',
+        property_type: property.property_type || 'Apartment',
+        monthly_rent: property.monthly_rent ?? '',
+        bedrooms: property.bedrooms ?? 0,
+        bathrooms: property.bathrooms ?? 0,
+        description: property.description || '',
+        availability: property.availability || 'vacant',
+        image_url: property.image_url || '',
+        amenities: Array.isArray(property.amenities) ? property.amenities.join(', ') : '',
+      }))
+      .catch(err => setError(err.message || 'Unable to load this property.'))
+      .finally(() => setLoading(false))
+  }, [id])
 
-  if (!property || !form) {
-    return (
-      <div className="surface-card p-8">
-        <h1 className="page-title">Property not found</h1>
-        <Link to="/landlord/properties" className="btn btn-primary mt-5">Back to properties</Link>
-      </div>
-    )
+  function update(event) {
+    setForm(current => ({ ...current, [event.target.name]: event.target.value }))
+    setError('')
+    setSuccess('')
   }
 
-  function updateField(event) {
-    setSaved(false)
-    setForm((current) => ({ ...current, [event.target.name]: event.target.value }))
-  }
-
-  function handleSubmit(event) {
+  async function submit(event) {
     event.preventDefault()
-    setSaved(true)
+    setSaving(true)
+    setError('')
+    setSuccess('')
+    try {
+      await landlordAPI.updateProperty(id, {
+        ...form,
+        monthly_rent: Number(form.monthly_rent),
+        bedrooms: Number(form.bedrooms),
+        bathrooms: Number(form.bathrooms),
+        amenities: form.amenities.split(',').map(item => item.trim()).filter(Boolean),
+      })
+      setSuccess('Property updated successfully.')
+    } catch (err) {
+      setError(err.message || 'Unable to update property.')
+    } finally {
+      setSaving(false)
+    }
   }
+
+  if (loading) return <div className="surface-card p-8 text-center text-muted">Loading property...</div>
+  if (!form) return <div className="surface-card p-8"><p className="text-red-700">{error || 'Property not found.'}</p><Link to="/landlord/properties" className="btn btn-primary mt-5">Back to properties</Link></div>
 
   const fields = [
-    { name: 'name', label: 'Property name', type: 'text' },
-    { name: 'location', label: 'Location', type: 'text' },
-    { name: 'units', label: 'Total units', type: 'number' },
-    { name: 'occupied', label: 'Occupied units', type: 'number' },
-    { name: 'rent', label: 'Monthly rent per unit (KES)', type: 'number' },
+    ['name', 'Property name', 'text'],
+    ['location', 'Location', 'text'],
+    ['monthly_rent', 'Monthly rent (KES)', 'number'],
+    ['bedrooms', 'Bedrooms', 'number'],
+    ['bathrooms', 'Bathrooms', 'number'],
+    ['image_url', 'Image URL', 'url'],
   ]
 
   return (
     <>
-      <Link to="/landlord/properties" className="mb-5 inline-flex items-center gap-2 text-sm text-muted hover:text-brand-800">
-        <ArrowLeft size={16} /> Back to properties
-      </Link>
-
-      <PageHeading
-        title="Edit property"
-        description={`Update the information for ${property.name}.`}
-      />
-
-      <SampleDataNotice />
-
-      <form onSubmit={handleSubmit} className="surface-card max-w-2xl p-6">
-        <div className="grid gap-5 sm:grid-cols-2">
-          {fields.map((field) => (
-            <label key={field.name} className="block">
-              <span className="mb-2 block text-sm font-medium text-ink">{field.label}</span>
-              <input
-                required
-                min={field.type === 'number' ? 0 : undefined}
-                type={field.type}
-                name={field.name}
-                value={form[field.name]}
-                onChange={updateField}
-                className="form-input w-full"
-              />
-            </label>
-          ))}
-
-          <label className="block">
-            <span className="mb-2 block text-sm font-medium text-ink">Property status</span>
-            <select
-              name="status"
-              value={form.status}
-              onChange={updateField}
-              className="form-input w-full"
-            >
-              <option value="Active">Active</option>
-              <option value="Pending">Pending</option>
-              <option value="Inactive">Inactive</option>
-            </select>
+      <Link to="/landlord/properties" className="mb-5 inline-flex items-center gap-2 text-sm text-muted hover:text-brand-800"><ArrowLeft size={16} /> Back to properties</Link>
+      <PageHeading title="Edit property" description="Update your property information." />
+      <form onSubmit={submit} className="surface-card max-w-2xl space-y-5 p-6">
+        {fields.map(([name, label, type]) => (
+          <label key={name} className="block">
+            <span className="mb-2 block text-sm font-medium text-ink">{label}</span>
+            <input required={['name', 'location', 'monthly_rent'].includes(name)} min={type === 'number' ? 0 : undefined} type={type} name={name} value={form[name]} onChange={update} className="form-input w-full" />
           </label>
-        </div>
-
-        <div className="mt-6 border-t border-border pt-5">
-          <p className="text-sm text-muted">
-            Current monthly rent: {landlordKES(property.rent)}
-          </p>
-
-          {saved && (
-            <div role="status" className="mt-4 border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-              Your changes are ready in this preview. Connect the backend API to save them permanently.
-            </div>
-          )}
-
-          <button type="submit" className="btn btn-primary mt-5">
-            <Save size={17} /> Preview changes
-          </button>
-        </div>
+        ))}
+        <label className="block">
+          <span className="mb-2 block text-sm font-medium text-ink">Property type</span>
+          <select name="property_type" value={form.property_type} onChange={update} className="form-input w-full">
+            <option>Apartment</option><option>Bedsitter</option><option>House</option><option>Studio</option>
+          </select>
+        </label>
+        <label className="block">
+          <span className="mb-2 block text-sm font-medium text-ink">Availability</span>
+          <select name="availability" value={form.availability} onChange={update} className="form-input w-full">
+            <option value="vacant">Vacant</option><option value="occupied">Occupied</option>
+          </select>
+        </label>
+        <label className="block">
+          <span className="mb-2 block text-sm font-medium text-ink">Amenities (comma separated)</span>
+          <input name="amenities" value={form.amenities} onChange={update} className="form-input w-full" />
+        </label>
+        <label className="block">
+          <span className="mb-2 block text-sm font-medium text-ink">Description</span>
+          <textarea required minLength={10} name="description" value={form.description} onChange={update} rows="5" className="form-input w-full" />
+        </label>
+        {error && <p role="alert" className="bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+        {success && <p role="status" className="bg-green-50 p-3 text-sm text-green-700">{success}</p>}
+        <button disabled={saving} type="submit" className="btn btn-primary"><Save size={17} /> {saving ? 'Saving...' : 'Save changes'}</button>
       </form>
     </>
   )
 }
-
-export default EditPropertyPage
