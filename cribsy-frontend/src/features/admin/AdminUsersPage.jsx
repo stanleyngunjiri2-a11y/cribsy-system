@@ -7,6 +7,7 @@ import { adminAPI } from '../../services/api'
 export default function AdminUsersPage() {
   const [users, setUsers] = useState([])
   const [search, setSearch] = useState('')
+  const [roleFilter, setRoleFilter] = useState('all')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [updating, setUpdating] = useState(null)
@@ -48,13 +49,14 @@ export default function AdminUsersPage() {
   }
 
   const filtered = users.filter(user =>
+    (roleFilter === 'all' || user.role === roleFilter) &&
     `${user.full_name || user.name || ''} ${user.email || ''} ${user.role || ''}`
       .toLowerCase().includes(search.toLowerCase())
   )
 
   return (
     <>
-      <PageHeading title="User management" description="View and manage registered tenants and landlords." />
+      <PageHeading title="User management" description="View and manage all registered tenants, landlords and administrators." />
 
       <div className="surface-card mb-6 flex items-center gap-3 p-4">
         <Search size={18} className="text-muted" />
@@ -64,6 +66,30 @@ export default function AdminUsersPage() {
           value={search}
           onChange={event => setSearch(event.target.value)}
         />
+      </div>
+
+      <div className="mb-5 flex flex-wrap gap-2" aria-label="Filter users by role">
+        {[
+          { value: 'all', label: 'All users' },
+          { value: 'tenant', label: 'Tenants' },
+          { value: 'landlord', label: 'Landlords' },
+          { value: 'admin', label: 'Administrators' },
+          { value: 'superadmin', label: 'Superadmins' },
+        ].map(({ value, label }) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={roleFilter === value}
+            onClick={() => setRoleFilter(value)}
+            className={`border px-4 py-2 text-sm font-medium ${
+              roleFilter === value
+                ? 'border-brand-800 bg-brand-50 text-brand-800'
+                : 'border-border bg-white text-muted'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       {error && <p role="alert" className="mb-4 text-sm text-red-700">{error}</p>}
@@ -92,7 +118,7 @@ export default function AdminUsersPage() {
                     <StatusBadge tone={user.status === 'active' ? 'green' : 'amber'}>{user.status}</StatusBadge>
                   </td>
                   <td className="px-5 py-4">
-                    {user.role === 'admin' ? (
+                    {user.role === 'admin' || user.role === 'superadmin' ? (
                       <span className="text-xs text-muted">Protected account</span>
                     ) : (
                       <button
@@ -111,7 +137,7 @@ export default function AdminUsersPage() {
 
           {!filtered.length && (
             <p className="p-8 text-center text-sm text-muted">
-              {search ? 'No users match your search.' : 'No registered users found.'}
+              {search || roleFilter !== 'all' ? 'No users match your filters.' : 'No registered users found.'}
             </p>
           )}
         </div>
