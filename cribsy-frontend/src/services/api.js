@@ -70,6 +70,7 @@ export const landlordAPI = {
   updateProperty: (id, data) => apiRequest(`/api/landlord/properties/${id}`, put(data)),
   deleteProperty: id => apiRequest(`/api/landlord/properties/${id}`, { method: 'DELETE' }),
   tenants: () => apiRequest('/api/landlord/tenants'),
+  createTenancy: data => apiRequest('/api/landlord/tenancies', post(data)),
   maintenance: () => apiRequest('/api/landlord/maintenance'),
   updateMaintenance: (id, status) => apiRequest(`/api/landlord/maintenance/${id}`, patch({ status })),
   payments: () => apiRequest('/api/landlord/payments'),

@@ -168,21 +168,21 @@ function PropertyDetailsPage() {
             </div>
 
             <Link
-              to="/login"
+              to="/register"
               state={{ from: { pathname: `/properties/${id}` } }}
               className="btn btn-primary mt-6 w-full justify-center"
             >
-              Sign in to continue
-            </Link>
-            <Link
-              to="/register"
-              state={{ from: { pathname: `/properties/${id}` } }}
-              className="mt-3 block text-center text-sm font-medium text-brand-800 underline"
-            >
               Create an account
             </Link>
+            <Link
+              to="/login"
+              state={{ from: { pathname: `/properties/${id}` } }}
+              className="btn btn-outline mt-3 w-full justify-center"
+            >
+              Sign in
+            </Link>
             <p className="mt-3 text-xs leading-5 text-muted">
-              Sign in with an existing account or create a new account to continue.
+              Already have an account? Sign in to return to this property.
             </p>
           </aside>
         </div>

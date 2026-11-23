@@ -4,6 +4,9 @@ import { ArrowLeft } from 'lucide-react'
 import PageHeading from '../../components/shared/PageHeading'
 import { landlordAPI, uploadAPI } from '../../services/api'
 
+const MAX_IMAGE_SIZE = 2 * 1024 * 1024
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+
 export default function AddPropertyPage() {
   const navigate = useNavigate()
   const [form, setForm] = useState({
@@ -12,6 +15,7 @@ export default function AddPropertyPage() {
     description: '',
   })
   const [image, setImage] = useState(null)
+  const [imageUrl, setImageUrl] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -20,14 +24,45 @@ export default function AddPropertyPage() {
   async function submit(e) {
     e.preventDefault()
     setError('')
-    setLoading(true)
 
+    const directImageUrl = imageUrl.trim()
+    if (image && directImageUrl) {
+      setError('Choose either an image file or an image URL, not both.')
+      return
+    }
+
+    if (image && !ALLOWED_IMAGE_TYPES.includes(image.type)) {
+      setError('Choose a JPG, PNG, or WebP image.')
+      return
+    }
+
+    if (image && image.size > MAX_IMAGE_SIZE) {
+      setError('The image must be 2 MB or smaller.')
+      return
+    }
+
+    if (directImageUrl) {
+      try {
+        const parsedUrl = new URL(directImageUrl)
+        if (parsedUrl.protocol !== 'https:' || parsedUrl.username || parsedUrl.password) {
+          throw new Error('Invalid protocol')
+        }
+      } catch {
+        setError('Enter a valid HTTPS image URL without embedded credentials.')
+        return
+      }
+    }
+
+    setLoading(true)
     try {
-      let image_url = null
+      let image_url = directImageUrl || null
 
       if (image) {
         const uploaded = await uploadAPI.image(image)
-        image_url = uploaded.url
+        if (typeof uploaded?.url !== 'string' || !uploaded.url.trim()) {
+          throw new Error('The image upload did not return an image URL. Try another image or enter an image URL instead.')
+        }
+        image_url = uploaded.url.trim()
       }
 
       await landlordAPI.createProperty({
@@ -86,10 +121,17 @@ export default function AddPropertyPage() {
             <input type="number" min="1" name="monthly_rent" className="form-control mt-2" value={form.monthly_rent} onChange={update} required />
           </label>
 
-          <label className="form-label sm:col-span-2">Property image
+          <label className="form-label sm:col-span-2">Cloudinary image URL (optional)
+            <input type="url" name="imageUrl" className="form-control mt-2"
+              value={imageUrl} onChange={e => setImageUrl(e.target.value)}
+              placeholder="https://res.cloudinary.com/..." />
+            <span className="text-xs text-muted">On the production server, direct image URLs must be from the configured Cloudinary account.</span>
+          </label>
+
+          <label className="form-label sm:col-span-2">Or upload a property image
             <input type="file" accept="image/jpeg,image/png,image/webp" className="form-control mt-2"
               onChange={e => setImage(e.target.files?.[0] || null)} />
-            <span className="text-xs text-muted">Maximum image size: 2 MB.</span>
+            <span className="text-xs text-muted">JPG, PNG, or WebP; maximum size: 2 MB. Use either a URL or a file.</span>
           </label>
 
           <label className="form-label sm:col-span-2">Description *
