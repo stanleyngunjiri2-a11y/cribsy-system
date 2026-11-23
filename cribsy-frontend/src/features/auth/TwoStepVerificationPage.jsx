@@ -49,8 +49,18 @@ function TwoStepVerificationPage() {
         admin: '/admin',
         superadmin: '/admin',
       }
+      const returnTo = location.state?.from
+      const returnPath = typeof returnTo?.pathname === 'string'
+        && returnTo.pathname.startsWith('/')
+        && !returnTo.pathname.startsWith('//')
+        ? {
+            pathname: returnTo.pathname,
+            search: returnTo.search || '',
+            hash: returnTo.hash || '',
+          }
+        : null
 
-      navigate(destinations[role] || '/dashboard', { replace: true })
+      navigate(returnPath || destinations[role] || '/dashboard', { replace: true })
     } catch (err) {
       setError(err.message || 'Verification failed. Check your code and try again.')
     } finally {

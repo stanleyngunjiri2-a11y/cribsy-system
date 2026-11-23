@@ -1,13 +1,21 @@
 import { useState } from 'react'
-import { Link, NavLink, Outlet } from 'react-router-dom'
-import { Menu, X, LogOut } from 'lucide-react'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Menu, X, LogOut, ExternalLink } from 'lucide-react'
 import CribsyLogo from './CribsyLogo'
+import { useAuth } from '../../context/AuthContext'
 
 function DashboardLayout({ title, links }) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const navigate = useNavigate()
+  const { logout } = useAuth()
 
   function closeMenu() {
     setMobileOpen(false)
+  }
+
+  function handleLogout() {
+    logout()
+    navigate('/login', { replace: true })
   }
 
   return (
@@ -20,6 +28,15 @@ function DashboardLayout({ title, links }) {
             <span className="hidden text-sm text-muted sm:block">
               {title} workspace
             </span>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex items-center gap-2 text-sm font-medium text-muted hover:text-ink"
+            >
+              <LogOut size={18} />
+              Log out
+            </button>
 
             <button
               type="button"
@@ -64,8 +81,8 @@ function DashboardLayout({ title, links }) {
               to="/"
               className="flex items-center gap-3 px-3 py-2 text-sm text-muted hover:text-ink"
             >
-              <LogOut size={18} />
-              Return to website
+              <ExternalLink size={18} />
+              View website
             </Link>
           </div>
         </aside>
@@ -100,6 +117,25 @@ function DashboardLayout({ title, links }) {
                   </NavLink>
                 ))}
               </nav>
+
+              <div className="mt-8 border-t border-border pt-5">
+                <Link
+                  to="/"
+                  onClick={closeMenu}
+                  className="flex items-center gap-3 px-3 py-2 text-sm text-muted"
+                >
+                  <ExternalLink size={18} />
+                  View website
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="mt-2 flex w-full items-center gap-3 px-3 py-2 text-sm text-muted"
+                >
+                  <LogOut size={18} />
+                  Log out
+                </button>
+              </div>
             </aside>
           </div>
         )}

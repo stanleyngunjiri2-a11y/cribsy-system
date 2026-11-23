@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight,
   Building2,
@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import CribsyLogo from '../../components/shared/CribsyLogo'
+import { useAuth } from '../../context/AuthContext'
 
 const benefits = [
   {
@@ -39,6 +40,19 @@ const steps = [
 
 function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const navigate = useNavigate()
+  const { user, isAuthenticated, logout } = useAuth()
+  const workspace = {
+    tenant: '/tenant',
+    landlord: '/landlord',
+    admin: '/admin',
+    superadmin: '/admin',
+  }[user?.role] || '/dashboard'
+
+  function handleLogout() {
+    logout()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <main className="min-h-screen bg-white">
@@ -54,12 +68,25 @@ function HomePage() {
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
-            <Link to="/login" className="px-4 py-2.5 text-sm font-semibold text-ink hover:text-brand-800">
-              Sign in
-            </Link>
-            <Link to="/register" className="btn btn-primary">
-              Get started <ArrowRight size={16} />
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link to={workspace} className="px-4 py-2.5 text-sm font-semibold text-ink hover:text-brand-800">
+                  My workspace
+                </Link>
+                <button type="button" onClick={handleLogout} className="btn btn-outline">
+                  Log out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="px-4 py-2.5 text-sm font-semibold text-ink hover:text-brand-800">
+                  Sign in
+                </Link>
+                <Link to="/register" className="btn btn-primary">
+                  Get started <ArrowRight size={16} />
+                </Link>
+              </>
+            )}
           </div>
 
           <button
@@ -78,8 +105,17 @@ function HomePage() {
               <Link to="/properties" onClick={() => setMenuOpen(false)}>Browse properties</Link>
               <a href="#features" onClick={() => setMenuOpen(false)}>Features</a>
               <a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a>
-              <Link to="/login">Sign in</Link>
-              <Link to="/register" className="btn btn-primary">Create account</Link>
+              {isAuthenticated ? (
+                <>
+                  <Link to={workspace} onClick={() => setMenuOpen(false)}>My workspace</Link>
+                  <button type="button" onClick={handleLogout} className="btn btn-outline">Log out</button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login">Sign in</Link>
+                  <Link to="/register" className="btn btn-primary">Create account</Link>
+                </>
+              )}
             </nav>
           </div>
         )}

@@ -1,6 +1,6 @@
 // OWNER: Member 1 - Stanley.
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import AuthCard from './AuthCard'
 import PasswordField from './PasswordField'
 import FormField from '../../components/shared/FormField'
@@ -10,6 +10,7 @@ import { isEmail } from './validators'
 
 function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { login } = useAuth()
 
   const [values, setValues] = useState({ email: '', password: '' })
@@ -52,7 +53,7 @@ function LoginPage() {
       sessionStorage.setItem('cribsy_pending_verification_email', email)
 
       navigate('/verify', {
-        state: { email },
+        state: { email, from: location.state?.from },
       })
     } catch (error) {
       setServerError(error.message || 'Unable to sign in.')
@@ -68,13 +69,23 @@ function LoginPage() {
       footer={
         <>
           New here?{' '}
-          <Link className="text-emerald-700 underline" to="/register">
+          <Link
+            className="text-emerald-700 underline"
+            to="/register"
+            state={{ from: location.state?.from }}
+          >
             Create an account
           </Link>
         </>
       }
     >
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+        {location.state?.registered && (
+          <p role="status" className="rounded-md bg-emerald-50 p-3 text-sm text-emerald-800">
+            Your account was created successfully. Sign in to continue.
+          </p>
+        )}
+
         <FormField id="email" name="email" label="Email" type="email"
           autoComplete="email" value={values.email}
           onChange={handleChange} error={errors.email} />

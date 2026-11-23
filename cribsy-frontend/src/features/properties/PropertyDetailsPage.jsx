@@ -67,7 +67,11 @@ function PropertyDetailsPage() {
       <header className="border-b border-border bg-white">
         <div className="page-container flex h-[72px] items-center justify-between">
           <Link to="/" className="text-xl font-bold text-brand-800">Cribsy</Link>
-          <Link to="/login" className="text-sm font-semibold text-brand-800">
+          <Link
+            to="/login"
+            state={{ from: { pathname: `/properties/${id}` } }}
+            className="text-sm font-semibold text-brand-800"
+          >
             Sign in
           </Link>
         </div>
@@ -163,11 +167,22 @@ function PropertyDetailsPage() {
               )}
             </div>
 
-            <Link to="/register" className="btn btn-primary mt-6 w-full justify-center">
+            <Link
+              to="/login"
+              state={{ from: { pathname: `/properties/${id}` } }}
+              className="btn btn-primary mt-6 w-full justify-center"
+            >
+              Sign in to continue
+            </Link>
+            <Link
+              to="/register"
+              state={{ from: { pathname: `/properties/${id}` } }}
+              className="mt-3 block text-center text-sm font-medium text-brand-800 underline"
+            >
               Create an account
             </Link>
             <p className="mt-3 text-xs leading-5 text-muted">
-              Create an account to get started with Cribsy.
+              Sign in with an existing account or create a new account to continue.
             </p>
           </aside>
         </div>
