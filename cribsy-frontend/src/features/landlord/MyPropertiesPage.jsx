@@ -58,7 +58,10 @@ export default function MyPropertiesPage() {
                       </StatusBadge>
                     </td>
                     <td className="px-5 py-4">
-                      <Link to={`/landlord/properties/${property.id}/edit`} className="inline-flex items-center gap-2 font-semibold text-brand-800"><Pencil size={15} /> Edit</Link>
+                      <div className="flex flex-col gap-2">
+                        <Link to={`/landlord/properties/${property.id}/edit`} className="inline-flex items-center gap-2 font-semibold text-brand-800"><Pencil size={15} /> Edit</Link>
+                        <Link to={`/landlord/properties/${property.id}/units`} className="font-semibold text-brand-800">Manage units</Link>
+                      </div>
                     </td>
                   </tr>
                 ))}

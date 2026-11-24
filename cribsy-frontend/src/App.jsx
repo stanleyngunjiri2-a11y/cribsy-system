@@ -10,6 +10,7 @@ import TwoStepVerificationPage from './features/auth/TwoStepVerificationPage'
 
 import TenantLayout from './features/tenant/tenantLayout'
 import TenantDashboardPage from './features/tenant/tenantDashboardPage'
+import TenantApplicationsPage from './features/tenant/TenantApplicationsPage'
 import RentHistoryPage from './features/tenant/rentHistoryPage'
 import PaymentDetailsPage from './features/tenant/paymentDetailsPage'
 import TenantProfilePage from './features/tenant/tenantProfilePage'
@@ -24,6 +25,8 @@ import MyPropertiesPage from './features/landlord/MyPropertiesPage'
 import AddPropertyPage from './features/landlord/AddPropertyPage'
 import EditPropertyPage from './features/landlord/EditPropertyPage'
 import LandlordTenantsPage from './features/landlord/LandlordTenantsPage'
+import LandlordApplicationsPage from './features/landlord/LandlordApplicationsPage'
+import PropertyUnitsPage from './features/landlord/PropertyUnitsPage'
 import LandlordMaintenancePage from './features/maintenance/LandlordMaintenancePage'
 
 import AdminLayout from './features/admin/AdminLayout'
@@ -66,6 +69,8 @@ function App() {
           <Route path="properties/new" element={<AddPropertyPage />} />
           <Route path="properties/:id/edit" element={<EditPropertyPage />} />
           <Route path="tenants" element={<LandlordTenantsPage />} />
+          <Route path="applications" element={<LandlordApplicationsPage />} />
+          <Route path="properties/:id/units" element={<PropertyUnitsPage />} />
           <Route path="maintenance" element={<LandlordMaintenancePage />} />
         </Route>
       </Route>
@@ -73,6 +78,7 @@ function App() {
       <Route element={<ProtectedRoute allowedRoles={['tenant']} />}>
         <Route path="/tenant" element={<TenantLayout />}>
           <Route index element={<TenantDashboardPage />} />
+          <Route path="applications" element={<TenantApplicationsPage />} />
           <Route path="rent-history" element={<RentHistoryPage />} />
           <Route path="rent-history/:id" element={<PaymentDetailsPage />} />
           <Route path="maintenance" element={<TenantMaintenancePage />} />

@@ -48,6 +48,19 @@ export const uploadAPI = {
   },
 }
 
+export const applicationAPI = {
+  submit: (propertyId, data) => apiRequest(`/api/properties/${propertyId}/applications`, post(data)),
+  mine: () => apiRequest('/api/tenant/applications'),
+  landlordList: status => apiRequest('/api/landlord/applications' + (status ? `?status=${encodeURIComponent(status)}` : '')),
+  review: (id, status) => apiRequest(`/api/landlord/applications/${id}`, patch({ status })),
+  assign: (id, data) => apiRequest(`/api/landlord/applications/${id}/assign`, post(data)),
+}
+
+export const unitAPI = {
+  list: propertyId => apiRequest(`/api/landlord/properties/${propertyId}/units`),
+  create: (propertyId, data) => apiRequest(`/api/landlord/properties/${propertyId}/units`, post(data)),
+}
+
 export const propertyAPI = {
   list: params => apiRequest('/api/properties' + (params ? '?' + new URLSearchParams(params) : '')),
   get: id => apiRequest(`/api/properties/${id}`),

@@ -2,11 +2,17 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, Bath, BedDouble, MapPin, ShieldCheck } from 'lucide-react'
 import PageHeading from '../../components/shared/PageHeading'
-import { propertyAPI } from '../../services/api'
+import { propertyAPI, applicationAPI } from '../../services/api'
+import { useAuth } from '../../context/AuthContext'
 import { formatPropertyKES } from './propertyData'
 
 function PropertyDetailsPage() {
   const { id } = useParams()
+  const { user, isAuthenticated } = useAuth()
+  const [applicationMessage, setApplicationMessage] = useState('')
+  const [applicationError, setApplicationError] = useState('')
+  const [applicationSuccess, setApplicationSuccess] = useState('')
+  const [applying, setApplying] = useState(false)
   const [property, setProperty] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -37,6 +43,22 @@ function PropertyDetailsPage() {
       active = false
     }
   }, [id])
+
+  async function submitApplication(event) {
+    event.preventDefault()
+    setApplicationError('')
+    setApplicationSuccess('')
+    setApplying(true)
+    try {
+      await applicationAPI.submit(id, { message: applicationMessage })
+      setApplicationSuccess('Your application has been submitted. The landlord will review it.')
+      setApplicationMessage('')
+    } catch (err) {
+      setApplicationError(err.message || 'Unable to submit your application.')
+    } finally {
+      setApplying(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -167,23 +189,47 @@ function PropertyDetailsPage() {
               )}
             </div>
 
-            <Link
-              to="/register"
-              state={{ from: { pathname: `/properties/${id}` } }}
-              className="btn btn-primary mt-6 w-full justify-center"
-            >
-              Create an account
-            </Link>
-            <Link
-              to="/login"
-              state={{ from: { pathname: `/properties/${id}` } }}
-              className="btn btn-outline mt-3 w-full justify-center"
-            >
-              Sign in
-            </Link>
-            <p className="mt-3 text-xs leading-5 text-muted">
-              Already have an account? Sign in to return to this property.
-            </p>
+            {isAuthenticated && user?.role === 'tenant' ? (
+              <form onSubmit={submitApplication} className="mt-6">
+                <label className="form-label">
+                  Message to the landlord (optional)
+                  <textarea
+                    value={applicationMessage}
+                    onChange={event => setApplicationMessage(event.target.value)}
+                    maxLength={2000}
+                    rows={4}
+                    className="form-control mt-2"
+                    placeholder="Introduce yourself and tell the landlord anything relevant to your application."
+                  />
+                </label>
+                {applicationError && <p role="alert" className="mt-3 text-sm text-red-700">{applicationError}</p>}
+                {applicationSuccess && <p role="status" className="mt-3 text-sm text-green-700">{applicationSuccess}</p>}
+                <button type="submit" disabled={applying || property.availability !== 'vacant'} className="btn btn-primary mt-4 w-full justify-center disabled:opacity-50">
+                  {applying ? 'Submitting application...' : 'Apply for this property'}
+                </button>
+                {property.availability !== 'vacant' && <p className="mt-2 text-xs text-muted">This property is currently marked as occupied.</p>}
+              </form>
+            ) : (
+              <>
+                <Link
+                  to="/register"
+                  state={{ from: { pathname: `/properties/${id}` } }}
+                  className="btn btn-primary mt-6 w-full justify-center"
+                >
+                  Create an account
+                </Link>
+                <Link
+                  to="/login"
+                  state={{ from: { pathname: `/properties/${id}` } }}
+                  className="btn btn-outline mt-3 w-full justify-center"
+                >
+                  Sign in
+                </Link>
+                <p className="mt-3 text-xs leading-5 text-muted">
+                  Sign in with your existing tenant account to apply for this property.
+                </p>
+              </>
+            )}
           </aside>
         </div>
       </div>

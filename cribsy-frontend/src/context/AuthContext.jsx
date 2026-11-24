@@ -22,8 +22,11 @@ export function AuthProvider({ children }) {
       setUser(authenticatedUser)
       return authenticatedUser
     } catch (error) {
-      clearToken()
-      setUser(null)
+      // Preserve the session during temporary network/server failures.
+      if (error.status === 401 || error.status === 422) {
+        clearToken()
+        setUser(null)
+      }
       throw error
     } finally {
       setLoading(false)
@@ -39,8 +42,11 @@ export function AuthProvider({ children }) {
         if (active) setUser(response.user || response)
       })
       .catch(error => {
-        clearToken()
-        if (active) setUser(null)
+        // Only invalid/expired credentials should end the saved session.
+        if (error.status === 401 || error.status === 422) {
+          clearToken()
+          if (active) setUser(null)
+        }
         console.error('Unable to restore the saved session.', error)
       })
       .finally(() => {

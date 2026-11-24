@@ -104,6 +104,12 @@ function TenantDashboardPage() {
                   <dt className="text-slate-500">Landlord</dt>
                   <dd className="font-medium">{property?.landlord_name || 'Not available'}</dd>
                 </div>
+                {tenancy.unit && (
+                  <div>
+                    <dt className="text-slate-500">Unit number</dt>
+                    <dd className="font-semibold">{tenancy.unit.unit_number}</dd>
+                  </div>
+                )}
               </dl>
             </div>
           </section>

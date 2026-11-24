@@ -1,4 +1,4 @@
-import { Building2, LayoutDashboard, PlusSquare, Users, Wrench } from 'lucide-react'
+import { Building2, LayoutDashboard, PlusSquare, Users, Wrench, ClipboardList } from 'lucide-react'
 import DashboardLayout from '../../components/shared/DashboardLayout'
 
 const links = [
@@ -6,6 +6,7 @@ const links = [
   { to: '/landlord/properties', label: 'My properties', icon: Building2 },
   { to: '/landlord/properties/new', label: 'Add property', icon: PlusSquare },
   { to: '/landlord/tenants', label: 'Tenants', icon: Users },
+  { to: '/landlord/applications', label: 'Applications', icon: ClipboardList },
   { to: '/landlord/maintenance', label: 'Maintenance', icon: Wrench },
 ]
 

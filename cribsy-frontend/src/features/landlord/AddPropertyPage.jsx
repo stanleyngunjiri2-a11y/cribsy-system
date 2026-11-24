@@ -21,6 +21,7 @@ export default function AddPropertyPage() {
   const update = e => setForm({ ...form, [e.target.name]: e.target.value })
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!image) { setImagePreview(''); return undefined }
     const preview = URL.createObjectURL(image)
     setImagePreview(preview)

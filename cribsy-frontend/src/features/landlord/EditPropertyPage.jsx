@@ -16,6 +16,7 @@ export default function EditPropertyPage() {
   const [imagePreview, setImagePreview] = useState('')
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!image) { setImagePreview(''); return undefined }
     const preview = URL.createObjectURL(image)
     setImagePreview(preview)
