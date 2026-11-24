@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 
 const MAX_FILES = 4
-const MAX_SIZE = 2 * 1024 * 1024 // 2 MB each
+const MAX_SIZE = 6 * 1024 * 1024 // 6 MB each
 
 function PhotoUpload({ onChange }) {
   const [previews, setPreviews] = useState([])
@@ -16,7 +16,7 @@ function PhotoUpload({ onChange }) {
     const files = Array.from(e.target.files)
     if (files.length > MAX_FILES) return setError(`Choose at most ${MAX_FILES} photos.`)
     if (files.some((f) => !f.type.startsWith('image/'))) return setError('Only image files are allowed.')
-    if (files.some((f) => f.size > MAX_SIZE)) return setError('Each photo must be 2 MB or smaller.')
+    if (files.some((f) => f.size > MAX_SIZE)) return setError('Each photo must be 6 MB or smaller.')
 
     setError('')
     setPreviews(files.map((f) => URL.createObjectURL(f)))

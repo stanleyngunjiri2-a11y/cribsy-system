@@ -1,11 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import PageHeading from '../../components/shared/PageHeading'
 import { landlordAPI, uploadAPI } from '../../services/api'
-
-const MAX_IMAGE_SIZE = 2 * 1024 * 1024
-const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+import { preparePropertyImage } from '../../utils/imageUpload'
 
 export default function AddPropertyPage() {
   const navigate = useNavigate()
@@ -16,10 +14,18 @@ export default function AddPropertyPage() {
   })
   const [image, setImage] = useState(null)
   const [imageUrl, setImageUrl] = useState('')
+  const [imagePreview, setImagePreview] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const update = e => setForm({ ...form, [e.target.name]: e.target.value })
+
+  useEffect(() => {
+    if (!image) { setImagePreview(''); return undefined }
+    const preview = URL.createObjectURL(image)
+    setImagePreview(preview)
+    return () => URL.revokeObjectURL(preview)
+  }, [image])
 
   async function submit(e) {
     e.preventDefault()
@@ -28,16 +34,6 @@ export default function AddPropertyPage() {
     const directImageUrl = imageUrl.trim()
     if (image && directImageUrl) {
       setError('Choose either an image file or an image URL, not both.')
-      return
-    }
-
-    if (image && !ALLOWED_IMAGE_TYPES.includes(image.type)) {
-      setError('Choose a JPG, PNG, or WebP image.')
-      return
-    }
-
-    if (image && image.size > MAX_IMAGE_SIZE) {
-      setError('The image must be 2 MB or smaller.')
       return
     }
 
@@ -58,7 +54,7 @@ export default function AddPropertyPage() {
       let image_url = directImageUrl || null
 
       if (image) {
-        const uploaded = await uploadAPI.image(image)
+        const uploaded = await uploadAPI.image(await preparePropertyImage(image))
         if (typeof uploaded?.url !== 'string' || !uploaded.url.trim()) {
           throw new Error('The image upload did not return an image URL. Try another image or enter an image URL instead.')
         }
@@ -123,16 +119,17 @@ export default function AddPropertyPage() {
 
           <label className="form-label sm:col-span-2">Cloudinary image URL (optional)
             <input type="url" name="imageUrl" className="form-control mt-2"
-              value={imageUrl} onChange={e => setImageUrl(e.target.value)}
+              value={imageUrl} onChange={e => { setImageUrl(e.target.value); setImage(null) }}
               placeholder="https://res.cloudinary.com/..." />
             <span className="text-xs text-muted">On the production server, direct image URLs must be from the configured Cloudinary account.</span>
           </label>
 
           <label className="form-label sm:col-span-2">Or upload a property image
             <input type="file" accept="image/jpeg,image/png,image/webp" className="form-control mt-2"
-              onChange={e => setImage(e.target.files?.[0] || null)} />
-            <span className="text-xs text-muted">JPG, PNG, or WebP; maximum size: 2 MB. Use either a URL or a file.</span>
+              onChange={e => { setImage(e.target.files?.[0] || null); if (e.target.files?.[0]) setImageUrl('') }} />
+            <span className="text-xs text-muted">JPG, PNG, or WebP. Large images are compressed to fit the 6 MB upload limit.</span>
           </label>
+          {(imagePreview || imageUrl) && <div className="sm:col-span-2"><img src={imagePreview || imageUrl} alt="Property preview" className="max-h-64 max-w-full rounded-lg object-cover" /></div>}
 
           <label className="form-label sm:col-span-2">Description *
             <textarea name="description" rows="4" minLength="10" className="form-control mt-2"

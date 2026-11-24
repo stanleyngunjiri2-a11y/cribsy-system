@@ -49,7 +49,7 @@ export default function NewMaintenanceRequestPage() {
         </label>
         <label className="form-label">Attach a photo (optional)
           <input type="file" accept="image/jpeg,image/png,image/webp" className="form-control mt-2" onChange={event => setPhoto(event.target.files?.[0] || null)} />
-          <span className="mt-1 block text-xs text-muted">JPEG, PNG or WebP. Maximum 2 MB.</span>
+          <span className="mt-1 block text-xs text-muted">JPEG, PNG or WebP. Maximum 6 MB.</span>
         </label>
         {error && <p role="alert" className="bg-red-50 p-3 text-sm text-red-700">{error}</p>}
         <button disabled={saving} type="submit" className="btn btn-primary">{saving ? 'Submitting...' : 'Submit request'}</button>

@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeft, Save } from 'lucide-react'
 import PageHeading from '../../components/shared/PageHeading'
-import { landlordAPI } from '../../services/api'
+import { landlordAPI, uploadAPI } from '../../services/api'
+import { preparePropertyImage } from '../../utils/imageUpload'
 
 export default function EditPropertyPage() {
   const { id } = useParams()
@@ -11,6 +12,15 @@ export default function EditPropertyPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [image, setImage] = useState(null)
+  const [imagePreview, setImagePreview] = useState('')
+
+  useEffect(() => {
+    if (!image) { setImagePreview(''); return undefined }
+    const preview = URL.createObjectURL(image)
+    setImagePreview(preview)
+    return () => URL.revokeObjectURL(preview)
+  }, [image])
 
   useEffect(() => {
     landlordAPI.property(id)
@@ -42,8 +52,15 @@ export default function EditPropertyPage() {
     setError('')
     setSuccess('')
     try {
+      let imageUrl = form.image_url.trim()
+      if (image) {
+        const uploaded = await uploadAPI.image(await preparePropertyImage(image))
+        if (typeof uploaded?.url !== 'string' || !uploaded.url.trim()) throw new Error('The image upload did not return an image URL.')
+        imageUrl = uploaded.url.trim()
+      }
       await landlordAPI.updateProperty(id, {
         ...form,
+        image_url: imageUrl || null,
         monthly_rent: Number(form.monthly_rent),
         bedrooms: Number(form.bedrooms),
         bathrooms: Number(form.bathrooms),
@@ -66,7 +83,6 @@ export default function EditPropertyPage() {
     ['monthly_rent', 'Monthly rent (KES)', 'number'],
     ['bedrooms', 'Bedrooms', 'number'],
     ['bathrooms', 'Bathrooms', 'number'],
-    ['image_url', 'Image URL', 'url'],
   ]
 
   return (
@@ -80,6 +96,17 @@ export default function EditPropertyPage() {
             <input required={['name', 'location', 'monthly_rent'].includes(name)} min={type === 'number' ? 0 : undefined} type={type} name={name} value={form[name]} onChange={update} className="form-input w-full" />
           </label>
         ))}
+        <label className="block">
+          <span className="mb-2 block text-sm font-medium text-ink">Cloudinary image URL</span>
+          <input type="url" name="image_url" value={form.image_url} onChange={event => { update(event); setImage(null) }} className="form-input w-full" placeholder="https://res.cloudinary.com/..." />
+          <span className="mt-1 block text-xs text-muted">Enter a Cloudinary URL or choose a replacement image below.</span>
+        </label>
+        <label className="block">
+          <span className="mb-2 block text-sm font-medium text-ink">Replace image from your computer</span>
+          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={event => { setImage(event.target.files?.[0] || null); if (event.target.files?.[0]) setForm(current => ({ ...current, image_url: '' })) }} className="form-input w-full" />
+          <span className="mt-1 block text-xs text-muted">JPG, PNG, or WebP. Large images are compressed to fit the 6 MB upload limit.</span>
+        </label>
+        {(imagePreview || form.image_url) && <img src={imagePreview || form.image_url} alt="Property preview" className="max-h-64 max-w-full rounded-lg object-cover" />}
         <label className="block">
           <span className="mb-2 block text-sm font-medium text-ink">Property type</span>
           <select name="property_type" value={form.property_type} onChange={update} className="form-input w-full">
